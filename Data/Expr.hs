@@ -2,7 +2,8 @@ module Data.Expr where
 
 import Control.Applicative hiding (Const (..))
 import Control.Monad (guard)
-import Data.CNF
+import Data.CNF hiding (eval)
+import Data.Filtrable
 import Data.Hashable
 import Data.HashMap.Strict (HashMap)
 import qualified Data.HashMap.Strict as HM
@@ -16,7 +17,7 @@ data Expr v
     | Const Bool
   deriving (Eq, Show)
 
-toCNF :: (Eq v, Hashable v, Alternative f) => Expr v -> CNF HashMap f v
+toCNF :: (Eq v, Hashable v, Alternative f, Filtrable f) => Expr v -> CNF HashMap f v
 toCNF = CNF . go
   where
     go = \ case
@@ -27,6 +28,8 @@ toCNF = CNF . go
         Not (x :∧: y) -> go (Not x :∨: Not y)
         Not (x :∨: y) -> go (Not x :∧: Not y)
         x :∧: y -> go x <|> go y
-        x :∨: y -> (liftA2 . HM.unionWithMaybe $ \ a b -> a <$ guard (a == b)) (go x) (go y)
+        x :∨: y -> (liftA2Maybe . HM.unionWithM $ \ a b -> a <$ guard (a == b)) (go x) (go y)
         Const False -> pure HM.empty
         Const True -> empty
+
+    liftA2Maybe f x y = catMaybes $ liftA2 f x y
