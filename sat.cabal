@@ -1,0 +1,84 @@
+name:                sat
+version:             0.1.0.0
+synopsis:            SAT solver
+-- description:
+license:             BSD3
+license-file:        LICENSE
+author:              M Farkas-Dyck
+maintainer:          strake888@gmail.com
+copyright:           2018 M Farkas-Dyck
+category:            Math
+build-type:          Simple
+extra-source-files:  README.md
+cabal-version:       >=1.10
+
+library
+  exposed-modules:     Data.Only
+                     , Sat
+  other-modules:       Lens
+                     , Util.HashMap.Strict
+  build-depends:       base >=4.11 && <5
+                     , filtrable
+                     , hashable
+                     , transformers
+                     , unordered-containers
+                     , util
+                     , vector
+  default-language:    Haskell2010
+  default-extensions:  UnicodeSyntax
+                     , LambdaCase
+                     , InstanceSigs
+                     , PartialTypeSignatures
+                     , PolyKinds
+                     , ConstraintKinds
+                     , FlexibleContexts
+                     , FlexibleInstances
+                     , StandaloneDeriving
+                     , DeriveFunctor
+                     , DeriveFoldable
+                     , DeriveTraversable
+                     , DerivingStrategies
+                     , GeneralizedNewtypeDeriving
+                     , OverloadedStrings
+  ghc-options:         -Wall -Wcompat -Wredundant-constraints -Wno-name-shadowing
+                       -Wincomplete-record-updates -Wincomplete-uni-patterns
+                       -O2
+
+test-suite test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             Main.hs
+  build-depends:       base >=4.11 && <5
+                     , filtrable
+                     , hashable
+                     , transformers
+                     , unordered-containers
+                     , smallcheck
+                     , tasty
+                     , tasty-smallcheck
+                     , util
+                     , sat
+  default-language:    Haskell2010
+  default-extensions:  UnicodeSyntax
+                     , LambdaCase
+                     , InstanceSigs
+                     , PartialTypeSignatures
+                     , PolyKinds
+                     , ConstraintKinds
+                     , FlexibleContexts
+                     , FlexibleInstances
+                     , MultiParamTypeClasses
+                     , StandaloneDeriving
+                     , DeriveFunctor
+                     , DeriveFoldable
+                     , DeriveTraversable
+                     , DerivingStrategies
+                     , GeneralizedNewtypeDeriving
+                     , OverloadedStrings
+  ghc-options:         -Wall -Wcompat -Wredundant-constraints -Wno-name-shadowing
+                       -Wincomplete-record-updates -Wincomplete-uni-patterns
+                       -O2
+
+source-repository head
+  type:     git
+  location: https://github.com/strake/sat
