@@ -24,7 +24,7 @@ import qualified Util.HashMap.Strict as HM
 solve :: (Eq v, Hashable v, Filtrable f, Traversable f, MonadPlus p) => CNF HashMap f v -> p (HashMap v Bool)
 solve = (fmap . fmap) only . execWriterT . solve'
   where
-    solve' = solve'' <=< propagateUnits <=< elimLiterals
+    solve' = solve'' <=< elimLiterals <=< propagateUnits
 
     solve'' cnf@(CNF x)
       | null x = pure ()
