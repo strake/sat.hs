@@ -8,3 +8,5 @@ extra-deps:
 - util-0.1.6.0
 - git: https://github.com/strake/unordered-containers.hs
   commit: e573c3154f0ac66ece210ba9b4094d8681ceaf2d
+
+allow-newer: true

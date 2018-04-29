@@ -4,6 +4,7 @@
 module Main where
 
 import Control.Monad.Trans.Writer.Strict
+import Data.CNF
 import Data.Filtrable
 import Data.Function (on)
 import Data.HashMap.Strict (HashMap)

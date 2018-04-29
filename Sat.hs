@@ -7,9 +7,9 @@ import Control.Monad.Trans.Accum
 import Control.Monad.Trans.Maybe
 import Control.Monad.Trans.Writer.Strict
 import Data.Bool
+import Data.CNF
 import Data.Filtrable
 import Data.Function (on)
-import Data.Functor.Classes
 import Data.HashMap.Strict (HashMap)
 import qualified Data.HashMap.Strict as HM
 import Data.HashSet (HashSet)
@@ -20,41 +20,6 @@ import Data.Word (Word)
 import Lens
 import Util
 import qualified Util.HashMap.Strict as HM
-
-data Expr v
-    = Var v
-    | Expr v :∧: Expr v
-    | Expr v :∨: Expr v
-    | Not (Expr v)
-    | Const Bool
-  deriving (Eq, Show)
-
--- no tautologies!
-newtype CNF m f v = CNF { unCNF :: f (m v Bool) }
-instance (Eq1 f, Eq1 (m v)) => Eq (CNF m f v) where (==) = (liftEq . liftEq) (==) `on` unCNF
-instance (Show1 f, Show1 (m v)) => Show (CNF m f v) where showsPrec n = liftShowsPrec showsPrec1 (liftShowList showsPrec showList) n . unCNF
-
-cnf :: (Eq v, Hashable v, Alternative f) => Expr v -> CNF HashMap f v
-cnf = CNF . go
-  where
-    go = \ case
-        Var v -> pure $ HM.singleton v True
-        Not (Not x) -> go x
-        Not (Var v) -> pure $ HM.singleton v False
-        Not (Const a) -> go (Const (not a))
-        Not (x :∧: y) -> go (Not x :∨: Not y)
-        Not (x :∨: y) -> go (Not x :∧: Not y)
-        x :∧: y -> go x <|> go y
-        x :∨: y -> liftA2 disj (go x) (go y)
-        Const False -> pure HM.empty
-        Const True -> empty
-    disj = HM.unionWithMaybe (\ a b -> bool Nothing (Just a) (a == b))
-
-cnfLens :: Functor p => (f (m u Bool) -> p (g (n v Bool))) -> CNF m f u -> p (CNF n g v)
-cnfLens f = fmap CNF . f . unCNF
-
-eval :: Foldable f => (v -> Bool) -> CNF HashMap f v -> Bool
-eval f = (all . HM.anyWithKey) ((==) . f) . unCNF
 
 solve :: (Eq v, Hashable v, Filtrable f, Traversable f, MonadPlus p) => CNF HashMap f v -> p (HashMap v Bool)
 solve = (fmap . fmap) only . execWriterT . solve'

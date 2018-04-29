@@ -13,7 +13,9 @@ extra-source-files:  README.md
 cabal-version:       >=1.10
 
 library
-  exposed-modules:     Data.Only
+  exposed-modules:     Data.CNF
+                     , Data.Expr
+                     , Data.Only
                      , Sat
   other-modules:       Lens
                      , Util.HashMap.Strict
